@@ -7,6 +7,7 @@ import 'package:flutter_clean_architecture/features/daily_news/presentation/page
 import 'package:flutter_clean_architecture/injection_container.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await intializeDependecies();
   runApp(const MyApp());
 }
