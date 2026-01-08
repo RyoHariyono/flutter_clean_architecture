@@ -9,10 +9,7 @@ part of 'news_api_service.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
 class _NewsApiService implements NewsApiService {
-  _NewsApiService(
-    this._dio, {
-    this.baseUrl,
-  }) {
+  _NewsApiService(this._dio) {
     baseUrl ??= 'https://newsapi.org/v2/';
   }
 
