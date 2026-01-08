@@ -12,25 +12,35 @@ class ArticleRepositoryImpl implements ArticleRepository {
   ArticleRepositoryImpl(this._newsApiService);
   @override
   Future<DataState<List<ArticleModel>>> getNewsArticles() async {
-    final httpResponse = await _newsApiService.getNewsArticles(
-      apiKey: newsAPIKey,
-      country: countryQuery,
-      category: categoryQuery,
-    );
-    if (httpResponse['response'].statusCode == HttpStatus.ok) {
-      return DataSuccess(httpResponse['data']['articles']
-          .map<ArticleModel>(
-              (articleJson) => ArticleModel.fromJson(articleJson))
-          .toList());
-    } else {
-      return DataFailed(
-        DioError(
-          error: httpResponse['response'].statusMessage,
-          response: httpResponse['response'],
-          type: DioErrorType.response,
-          requestOptions: httpResponse['response'].requestOptions,
-        ),
+    try {
+      final httpResponse = await _newsApiService.getNewsArticles(
+        apiKey: newsAPIKey,
+        country: countryQuery,
+        category: categoryQuery,
       );
+
+      if (httpResponse.response.statusCode == HttpStatus.ok) {
+        final articlesData = httpResponse.data as Map<String, dynamic>;
+        final articlesList = articlesData['articles'] as List;
+
+        return DataSuccess(
+          articlesList
+              .map<ArticleModel>(
+                  (articleJson) => ArticleModel.fromJson(articleJson))
+              .toList(),
+        );
+      } else {
+        return DataFailed(
+          DioError(
+            error: httpResponse.response.statusMessage,
+            response: httpResponse.response,
+            type: DioErrorType.response,
+            requestOptions: httpResponse.response.requestOptions,
+          ),
+        );
+      }
+    } on DioError catch (e) {
+      return DataFailed(e);
     }
   }
 }

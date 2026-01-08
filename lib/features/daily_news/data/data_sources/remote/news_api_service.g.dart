@@ -9,7 +9,10 @@ part of 'news_api_service.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
 class _NewsApiService implements NewsApiService {
-  _NewsApiService(this._dio) {
+  _NewsApiService(
+    this._dio, {
+    this.baseUrl,
+  }) {
     baseUrl ??= 'https://newsapi.org/v2/';
   }
 
@@ -18,7 +21,7 @@ class _NewsApiService implements NewsApiService {
   String? baseUrl;
 
   @override
-  Future<Map<String, dynamic>> getNewsArticles({
+  Future<HttpResponse<dynamic>> getNewsArticles({
     apiKey,
     country,
     category,
@@ -32,8 +35,8 @@ class _NewsApiService implements NewsApiService {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<Map<String, dynamic>>(Options(
+    final _result =
+        await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -45,8 +48,9 @@ class _NewsApiService implements NewsApiService {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = _result.data!;
-    return value;
+    final value = _result.data;
+    final httpResponse = HttpResponse(value, _result);
+    return httpResponse;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
