@@ -4,6 +4,9 @@ import 'package:flutter_clean_architecture/features/daily_news/data/data_sources
 import 'package:flutter_clean_architecture/features/daily_news/data/repository/article_repository_impl.dart';
 import 'package:flutter_clean_architecture/features/daily_news/domain/repository/article_repository.dart';
 import 'package:flutter_clean_architecture/features/daily_news/domain/usecases/get_article.dart';
+import 'package:flutter_clean_architecture/features/daily_news/domain/usecases/get_saved_article.dart';
+import 'package:flutter_clean_architecture/features/daily_news/domain/usecases/remove_article.dart';
+import 'package:flutter_clean_architecture/features/daily_news/domain/usecases/save_article.dart';
 import 'package:flutter_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_bloc.dart';
 import 'package:get_it/get_it.dart';
 
@@ -21,13 +24,17 @@ Future<void> intializeDependecies() async {
   sl.registerSingleton<NewsApiService>(NewsApiService(sl()));
 
   sl.registerSingleton<ArticleRepository>(
-    ArticleRepositoryImpl(
-      sl(),
-    ),
+    ArticleRepositoryImpl(sl(), sl()),
   );
 
   //UseCases
   sl.registerSingleton<GetArticleUseCase>(GetArticleUseCase(sl()));
+
+  sl.registerSingleton<SaveArticleUseCase>(SaveArticleUseCase(sl()));
+
+  sl.registerSingleton<RemoveArticleUseCase>(RemoveArticleUseCase(sl()));
+
+  sl.registerSingleton<GetSavedArticleUseCase>(GetSavedArticleUseCase(sl()));
 
   //Blocs
   sl.registerFactory<RemoteArticleBloc>(() => RemoteArticleBloc(sl()));
