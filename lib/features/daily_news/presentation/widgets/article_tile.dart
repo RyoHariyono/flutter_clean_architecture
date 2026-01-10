@@ -1,24 +1,43 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_clean_architecture/config/routes/routes.dart';
 import 'package:flutter_clean_architecture/features/daily_news/domain/entities/article.dart';
 
 class ArticleWidget extends StatelessWidget {
   final ArticleEntity? article;
+  final bool isRemovable;
+  final Function(ArticleEntity article)? onRemove;
 
-  const ArticleWidget({super.key, this.article});
+  const ArticleWidget({
+    super.key,
+    this.article,
+    this.isRemovable = false,
+    this.onRemove,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsetsDirectional.only(
-          start: 14, end: 14, top: 10, bottom: 10),
-      height: 200,
-      child: Row(
-        children: [
-          _buildImage(context),
-          _buildTitleAndDescription(),
-        ],
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          AppRoutes.articleDetail,
+          arguments: article,
+        );
+      },
+      child: Container(
+        padding: const EdgeInsetsDirectional.only(
+            start: 14, end: 14, top: 10, bottom: 10),
+        height: 200,
+        child: Row(
+          children: [
+            _buildImage(context),
+            _buildTitleAndDescription(),
+            if (isRemovable) _buildRemoveButton(context),
+          ],
+        ),
       ),
     );
   }
@@ -125,6 +144,24 @@ class ArticleWidget extends StatelessWidget {
               ],
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRemoveButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        if (onRemove != null) {
+          onRemove!(article!);
+        }
+      },
+      child: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        child: Icon(
+          Icons.delete_outline,
+          color: Colors.red,
+          size: 24,
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_clean_architecture/config/routes/routes.dart';
 import 'package:flutter_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_bloc.dart';
 import 'package:flutter_clean_architecture/features/daily_news/presentation/bloc/article/remote/remote_article_state.dart';
 import 'package:flutter_clean_architecture/features/daily_news/presentation/widgets/article_tile.dart';
@@ -11,23 +12,34 @@ class DailyNews extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
+      appBar: _buildAppBar(context),
       body: _buildBody(),
     );
   }
 
-  _buildAppBar() {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: Text(
+      title: const Text(
         "Daily News",
         style: TextStyle(
           color: Colors.black,
         ),
       ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, AppRoutes.savedArticles);
+          },
+          icon: const Icon(
+            Icons.bookmark,
+            color: Colors.black,
+          ),
+        ),
+      ],
     );
   }
 
-  _buildBody() {
+  Widget _buildBody() {
     return BlocBuilder<RemoteArticleBloc, RemoteArticleState>(
       builder: (_, state) {
         if (state is RemoteArticlesLoading) {
